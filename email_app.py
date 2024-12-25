@@ -15,18 +15,21 @@ with open('scaler.pkl', 'rb') as scaler_file:
 with open('label_encoder.pkl', 'rb') as label_encoder_file:
     label_encoder = pickle.load(label_encoder_file)
 
-# Define the function to process the age
 def process_age(age):
     """
     Process raw age input to match the trained model's expectations.
-    Args:
-        age (int): Raw age input from the user.
-    Returns:
-        int: Encoded age group.
     """
     age_bins = [0, 18, 35, 50, 100]
     age_labels = ['teen', 'young_adult', 'middle_aged', 'senior']
+    if age < 0 or age > 100:
+        raise ValueError("Age must be between 0 and 100.")
+
+    # Bin the age
     age_group = pd.cut([age], bins=age_bins, labels=age_labels)[0]
+    if pd.isna(age_group):
+        raise ValueError("Invalid age group.")
+
+    # Transform to encoded label
     age_group_encoded = label_encoder.transform([age_group])[0]
     return age_group_encoded
 
@@ -73,20 +76,24 @@ engagement_score = st.number_input("Engagement Score:", min_value=0.0,help="A sc
 device_type = st.radio("Device Type:", options=[0, 1], format_func=lambda x: "Mobile" if x == 1 else "Desktop")
 clicked_previous_emails = st.radio("Clicked Previous Emails?", options=[0, 1], format_func=lambda x: "Yes" if x == 1 else "No",help="Whether the customer has clicked on links in previous emails")
 
-# Prediction Button
+# Updated Prediction Button Logic
 if st.button("Predict"):
-    # Preprocess the input
-    processed_data = preprocess_input(
-        age, emails_opened, emails_clicked, purchase_history,
-        time_spent, days_since_last_open, engagement_score, 
-        device_type, clicked_previous_emails
-    )
+    try:
+        # Preprocess the input
+        processed_data = preprocess_input(
+            age, emails_opened, emails_clicked, purchase_history,
+            time_spent, days_since_last_open, engagement_score, 
+            device_type, clicked_previous_emails
+        )
 
-    # Predict using the trained model
-    prediction = loaded_model.predict(processed_data.reshape(1, -1))
+        # Predict using the trained model
+        prediction = loaded_model.predict(processed_data.reshape(1, -1))
 
-    # Display the result
-    if prediction[0] == 1:
-        st.success("The customer is likely to open the email!")
-    else:
-        st.error("The customer is unlikely to open the email.")
+        # Display the result
+        if prediction[0] == 1:
+            st.success("The customer is likely to open the email!")
+        else:
+            st.error("The customer is unlikely to open the email.")
+
+    except ValueError as e:
+        st.error(f"Input Error: {e}")
