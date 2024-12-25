@@ -58,8 +58,7 @@ st.title("Email Campaign Success Predictor")
 
 # Add an introductory explanation
 st.write("""
-This app predicts whether a Titanic passenger would have survived or not, based on various details about the passenger. 
-Enter the details in the sidebar to get the survival probability and an easy-to-understand result.
+This app helps predict if a customer will open an email in a marketing campaign. You enter customer details like age, past email activity, purchase history, website time, and device type. The app uses this information to guess if they'll open the next email. It's a userfriendly way to predict email campaign success and helps marketing teams make better decisions.
 """)
 
 
