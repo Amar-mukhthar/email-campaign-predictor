@@ -54,17 +54,25 @@ def preprocess_input(age, emails_opened, emails_clicked, purchase_history,
 
 # Streamlit App Interface
 st.title("Email Campaign Success Predictor")
+# Add an introductory explanation
+
+# Add an introductory explanation
+st.write("""
+This app predicts whether a Titanic passenger would have survived or not, based on various details about the passenger. 
+Enter the details in the sidebar to get the survival probability and an easy-to-understand result.
+""")
+
 
 st.header("Enter Customer Details:")
 age = st.number_input("Customer Age:", min_value=0, step=1)
-emails_opened = st.number_input("Number of Emails Opened:", min_value=0, step=1)
-emails_clicked = st.number_input("Number of Emails Clicked:", min_value=0, step=1)
-purchase_history = st.number_input("Purchase History ($):", min_value=0.0)
-time_spent = st.number_input("Time Spent on Website (minutes):", min_value=0.0)
-days_since_last_open = st.number_input("Days Since Last Email Opened:", min_value=0)
-engagement_score = st.number_input("Engagement Score:", min_value=0.0)
+emails_opened = st.number_input("Number of Emails Opened:", min_value=0, step=1,help="How many emails the customer has opened previously.")
+emails_clicked = st.number_input("Number of Emails Clicked:", min_value=0, step=1,help="How many emails the customer has clicked on after opening them.")
+purchase_history = st.number_input("Purchase History ($):", min_value=0.0, help="Total amount of money the customer has spent in past purchases.")
+time_spent = st.number_input("Time Spent on Website (minutes):", min_value=0.0, help="Average time the customer spends on the website after receiving marketing emails.")
+days_since_last_open = st.number_input("Days Since Last Email Opened:", min_value=0,help="Number of days since the customer last opened an email.")
+engagement_score = st.number_input("Engagement Score:", min_value=0.0,help="A score reflecting overall customer engagement, calculated based on interactions with emails and website activity.")
 device_type = st.radio("Device Type:", options=[0, 1], format_func=lambda x: "Mobile" if x == 1 else "Desktop")
-clicked_previous_emails = st.radio("Clicked Previous Emails?", options=[0, 1], format_func=lambda x: "Yes" if x == 1 else "No")
+clicked_previous_emails = st.radio("Clicked Previous Emails?", options=[0, 1], format_func=lambda x: "Yes" if x == 1 else "No",help="Whether the customer has clicked on links in previous emails")
 
 # Prediction Button
 if st.button("Predict"):
